@@ -1,0 +1,129 @@
+<html>
+    <head>
+        <style>
+            /*reinicialização básica */
+            *{
+                margin: 0;
+                padding: 0;
+            }
+            
+            /* Configurações da página */
+            html {
+                width: 100%;
+                height: 100%;
+                background: radial-gradient(circle, #fff 0%, #aaa 100%) no-repeat;
+                overflow-x: hidden;
+                overflow-y: hidden;
+            }
+            body {
+                text-align: center;
+                display: table;
+                background: black;
+                width: 100%;
+                height: 100%;
+                overflow-x: hidden;
+                overflow-y: hidden;
+            }
+
+            canvas {display:block;}
+            
+            #author {
+                position: absolute;
+                bottom: 10px;
+                left: 10px;
+                color : #0F0;
+                z-index : 1;
+                box-sizing: border-box;
+                vertical-align: middle;
+            }
+        
+            span {
+                font-family: monospace;
+                font-size: 1.5em;
+            }
+            span:after {
+                content:"_Amorim";
+                opacity: 0;
+                animation: cursor 1s infinite;
+            }
+            @keyframes cursor {
+                0% {
+                    opacity: 0;
+                }
+                40% {
+                    opacity: 0;
+                }
+                50% {
+                    opacity: 1;
+                }
+                90% {
+                    opacity: 1;
+                }
+                100% {
+                    opacity: 0;
+                }
+            }
+        
+        </style>
+    </head>
+    <body>
+    
+        <canvas id="c"></canvas>
+        <span id = "author">Hugo</span>
+        
+        <script>
+        // obtendo canvas por id c
+        var c = document.getElementById("c");
+        var ctx = c.getContext("2d");
+
+        //tornando a tela cheia
+        c.height = window.innerHeight;
+        c.width = window.innerWidth;
+
+        //caracteres chineses - retirados do conjunto de caracteres unicode
+        var matrix = "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz123456789@#$%^&*()*&^%";
+        //convertendo a string em uma matriz de caracteres únicos
+        matrix = matrix.split("");
+
+        var font_size = 10;
+        var columns = c.width / font_size; //número de colunas para a chuva
+        //uma matriz de gotas - uma por coluna
+        var drops = [];
+        //x abaixo é a coordenada x
+        //1 = coordenada y da gota (a mesma para cada gota inicialmente)
+        for(var x = 0; x < columns; x++)
+            drops[x] = 1; 
+
+        //Desenhando os Efeitos
+        function draw()
+        {
+            //BG preto para a tela
+            //BG translúcido para mostrar trilha
+            ctx.fillStyle = "rgba(0, 0, 0, 0.04)";
+            ctx.fillRect(0, 0, c.width, c.height);
+
+            ctx.fillStyle = "#0F0"; //texto verde
+            ctx.font = font_size + "px arial";
+            //looping over drops
+            for( var i = 0; i < drops.length; i++ )
+            {
+                //Imprime um caractere chines aleatório
+                var text = matrix[ Math.floor( Math.random() * matrix.length ) ];
+                //x = i*font_size, y = value of drops[i]*font_size
+                ctx.fillText(text, i * font_size, drops[i] * font_size);
+
+                //enviando a gota de volta para o topo aleatoriamente depois de cruzar a tela
+                //adicionando uma aleatoriedade ao reset para fazer as gotas espalhadas no eixo Y
+                if( drops[i] * font_size > c.height && Math.random() > 0.975 )
+                    drops[i] = 0;
+
+                //incrementing Y coordinate
+                drops[i]++;
+            }
+        }
+
+        setInterval( draw, 35 );
+
+        </script>
+    </body>
+</html>
